@@ -1,0 +1,10 @@
+{
+  "chatLogId": 12345,
+  "videoId": 12345,
+  "streamerId": 67890,
+  "streamerHandle": "Shroud",
+  "streamerName": "Shroud",
+  "numMessages": 100000,
+  "date": "2023-09-22T14:45:30.000Z",
+  "streamLength": "02:30:00"
+}
