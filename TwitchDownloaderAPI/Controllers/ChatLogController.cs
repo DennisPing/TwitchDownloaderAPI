@@ -25,8 +25,7 @@ namespace TwitchDownloaderAPI.Controllers
             _chatLogStore = chatLogStore;
             _logger = logger;
         }
-
-        // GET: api/chatlog/{videoId}/metadata
+        
         [HttpGet("metadata")]
         public async Task<ActionResult<ChatLogMetadata>> GetMetadata([FromRoute] int videoId)
         {
@@ -45,8 +44,7 @@ namespace TwitchDownloaderAPI.Controllers
                 return StatusCode(500, new { Message = $"Internal server error: {ex.Message}" });
             }
         }
-
-        // GET: api/chatlog/{videoId}/content
+        
         [HttpGet("content")]
         [Produces("application/octet-stream", "application/x-protobuf")]
         public async Task<IActionResult> GetChatLog([FromRoute] int videoId)

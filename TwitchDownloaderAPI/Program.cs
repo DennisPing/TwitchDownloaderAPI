@@ -1,5 +1,5 @@
 using Serilog;
-using Serilog.Formatting.Compact;
+using TwitchDownloaderAPI.Middlewares;
 using TwitchDownloaderAPI.Store.Interfaces;
 using TwitchDownloaderAPI.Store.Local;
 
@@ -30,16 +30,16 @@ builder.Services.AddScoped<IChatLogStore, LocalChatLogStore>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.Console(new CompactJsonFormatter()) // for local development
-    .WriteTo.File(new CompactJsonFormatter(), "./logs/log-.txt", 
-        rollingInterval: RollingInterval.Day, 
-        retainedFileCountLimit: 30) // retains log files for 30 days
-    .CreateLogger();
+// Configure Serilog enrichers
+// builder.Host.UseSerilog((context, configuration) =>
+// {
+//     configuration
+//         .ReadFrom.Configuration(context.Configuration)
+//         .Enrich.FromLogContext()
+//         .Enrich.WithCorrelationIdHeader();
+// }, writeToProviders: true);
 
-builder.Host.UseSerilog();
+builder.Host.UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
 
 // Build the app
 var app = builder.Build();
@@ -51,7 +51,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+Console.WriteLine("Environment: " + app.Environment.EnvironmentName); // Check the environment
+Console.WriteLine("IsDevelopment: " + app.Environment.IsDevelopment()); // Check if it's development
+Console.WriteLine("Base Directory: " + AppDomain.CurrentDomain.BaseDirectory); // Check the base directory
+
 app.UseHttpsRedirection();
+// app.UseMiddleware<LoggingMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
