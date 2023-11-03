@@ -4,12 +4,12 @@ solution_file := "TwitchDownloaderAPI.sln"
 
 # Default recipe
 default:
-    just update_submodule
-    just commit_submodule
-    just build_debug
+    update-submodule
+    commit-submodule
+    build-debug
     
 # Update submodule if there are any
-update_submodule:
+update-submodule:
     cd {{submodule_path}} && \
     git fetch origin master && \
     git checkout master && \
@@ -17,19 +17,19 @@ update_submodule:
     @echo "Submodule updated to the latest commit on 'master' branch."
     
 # Commit updates if there are any
-commit_submodule:
+commit-submodule:
     git add {{submodule_path}}
     git diff-index --quiet HEAD {{submodule_path}} || \
     git commit -m "Updated TwitchDownloader submodule"
     @echo "Submodule changes committed"
     
 # Build Debug version
-build_debug:
+build-debug:
     @echo "Building .NET project - Debug"
     dotnet build {{solution_file}} --configuration Debug
     
 # Build Release version
-build_release:
+build-release:
     @echo "Building .NET project - Release"
     dotnet build {{solution_file}} --configuration Release
     
