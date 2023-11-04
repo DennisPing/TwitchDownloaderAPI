@@ -34,6 +34,10 @@
       <ProjectReference Include="..\TwitchDownloader\TwitchDownloaderCore\TwitchDownloaderCore.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="logs\" />
+    </ItemGroup>
+
 
 
 

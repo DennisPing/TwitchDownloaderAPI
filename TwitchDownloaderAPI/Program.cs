@@ -18,6 +18,8 @@ using TwitchDownloaderAPI.Store.Local;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
+
 // Add services to the container.
 builder.Services.AddControllers(options =>
 {
@@ -29,17 +31,6 @@ builder.Services.AddScoped<IChatLogStore, LocalChatLogStore>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// Configure Serilog enrichers
-// builder.Host.UseSerilog((context, configuration) =>
-// {
-//     configuration
-//         .ReadFrom.Configuration(context.Configuration)
-//         .Enrich.FromLogContext()
-//         .Enrich.WithCorrelationIdHeader();
-// }, writeToProviders: true);
-
-builder.Host.UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
 
 // Build the app
 var app = builder.Build();
@@ -55,10 +46,10 @@ Console.WriteLine("Environment: " + app.Environment.EnvironmentName); // Check t
 Console.WriteLine("IsDevelopment: " + app.Environment.IsDevelopment()); // Check if it's development
 Console.WriteLine("Base Directory: " + AppDomain.CurrentDomain.BaseDirectory); // Check the base directory
 
-app.UseHttpsRedirection();
-// app.UseMiddleware<LoggingMiddleware>();
+app.UseSerilogRequestLogging();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
 
-Log.CloseAndFlush();
+app.Lifetime.ApplicationStopped.Register(Log.CloseAndFlush);
+
+app.Run();

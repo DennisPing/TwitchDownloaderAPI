@@ -18,7 +18,6 @@ public class LocalMetadataStore : IMetadataStore
             try
             {
                 var content = File.ReadAllText(_filepath);
-                Console.WriteLine(content);
                 var options = new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -33,7 +32,7 @@ public class LocalMetadataStore : IMetadataStore
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"Error reading json metadata file: {ex.Message}");
+                Console.WriteLine($@"Error reading json metadata file: {ex.Message}");
             }
         }
     }
