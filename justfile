@@ -4,17 +4,17 @@ solution_file := "TwitchDownloaderAPI.sln"
 
 # Default recipe
 default:
-    update-submodule
-    commit-submodule
-    build-debug
+    just update-submodule
+    just commit-submodule
+    just build-debug
     
-# Update submodule if there are any
+# Update submodule to the latest tag on master branch
 update-submodule:
     cd {{submodule_path}} && \
-    git fetch origin master && \
-    git checkout master && \
-    git pull --ff-only origin master
-    @echo "Submodule updated to the latest commit on 'master' branch."
+    git fetch --tags && \
+    latest_tag=$(git describe --tags `git rev-list --tags --max-count=1 --branches=master`) && \
+    git checkout $latest_tag
+    @echo "Submodule updated to the latest tag on 'master' branch"
     
 # Commit updates if there are any
 commit-submodule:
