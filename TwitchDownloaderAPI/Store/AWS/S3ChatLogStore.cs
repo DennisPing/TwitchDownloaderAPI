@@ -1,5 +1,3 @@
-using TwitchDownloaderAPI.Store.Interfaces;
-
 namespace TwitchDownloaderAPI.Store.AWS;
 
 public class S3ChatLogStore : IChatLogStore

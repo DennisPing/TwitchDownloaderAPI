@@ -1,4 +1,4 @@
-namespace TwitchDownloaderAPI.Store.Interfaces;
+namespace TwitchDownloaderAPI.Store;
 
 public interface IChatLogStore
 {

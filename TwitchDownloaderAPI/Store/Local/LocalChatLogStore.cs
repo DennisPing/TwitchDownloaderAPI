@@ -1,12 +1,10 @@
-using TwitchDownloaderAPI.Store.Interfaces;
-
 namespace TwitchDownloaderAPI.Store.Local;
 
 public class LocalChatLogStore : IChatLogStore
 {
     private readonly string _folderpath;
 
-    public LocalChatLogStore(IWebHostEnvironment env)
+    public LocalChatLogStore(IHostEnvironment env)
     {
         _folderpath = Path.Combine(env.ContentRootPath, "Resources", "LocalChatLogs");
         if (!Directory.Exists(_folderpath))
@@ -22,18 +20,23 @@ public class LocalChatLogStore : IChatLogStore
         return Task.CompletedTask;
     }
 
-    public Task<byte[]?> GetChatLogAsync(int videoId)
+    /// <summary>
+    /// Asynchronously return the local chat log data
+    /// </summary>
+    /// <param name="videoId"></param>
+    /// <returns></returns>
+    public async Task<byte[]?> GetChatLogAsync(int videoId)
     {
-        var filename = $"{videoId}.txt";
+        var filename = $"{videoId}_chat.txt";
         var filepath = Path.Combine(_folderpath, filename);
         
         // If for some reason the file does not exist or is empty
         if (!File.Exists(filepath) || new FileInfo(filepath).Length == 0)
         {
-            return Task.FromResult<byte[]?>(null);
+            return null;
         }
 
-        var content = File.ReadAllBytes(filepath);
-        return Task.FromResult<byte[]?>(content);
+        var content = await File.ReadAllBytesAsync(filepath);
+        return content;
     }
 }

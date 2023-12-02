@@ -1,6 +1,5 @@
 using Serilog;
-using TwitchDownloaderAPI.Middlewares;
-using TwitchDownloaderAPI.Store.Interfaces;
+using TwitchDownloaderAPI.Store;
 using TwitchDownloaderAPI.Store.Local;
 
 /*
@@ -9,11 +8,11 @@ using TwitchDownloaderAPI.Store.Local;
  * api/videos/{videoId}/metadata - Video metadata
  * api/videos/{videoId}/content - Video content
  *
- * api/videos/{videoId}/chatlogs/metadata - Chatlog metadata related to video
- * api/videos/{videoId}/chatlogs/content - Chatlog content related to video
+ * api/videos/{videoId}/chatlog/metadata - Chatlog metadata related to video
+ * api/videos/{videoId}/chatlog/content - Chatlog content related to video
  *
- * api/videos/{videoId}/chatlogs/analytics - Analytical data related to chatlog
- * api/videos/[videoId}/chatlogs/graphs - Graphical data related to chatlog
+ * api/videos/{videoId}/chatlog/analytics - Analytical data related to chatlog
+ * api/videos/[videoId}/chatlog/graphs - Graphical data related to chatlog
  */
 
 var builder = WebApplication.CreateBuilder(args);

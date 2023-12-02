@@ -1,6 +1,6 @@
 using TwitchDownloaderAPI.Models;
 
-namespace TwitchDownloaderAPI.Store.Interfaces;
+namespace TwitchDownloaderAPI.Store;
 
 public interface IMetadataStore
 {

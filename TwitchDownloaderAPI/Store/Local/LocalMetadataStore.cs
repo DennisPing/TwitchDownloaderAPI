@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
 using TwitchDownloaderAPI.Models;
-using TwitchDownloaderAPI.Store.Interfaces;
 
 namespace TwitchDownloaderAPI.Store.Local;
 

@@ -21,9 +21,6 @@
         <Link>.dockerignore</Link>
       </Content>
       <None Remove="Resources\LocalChatLogs\12345.txt" />
-      <Content Include="Resources\LocalChatLogs\12345.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
 
 
 

@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TwitchDownloaderAPI.Models;
-using TwitchDownloaderAPI.Store.Interfaces;
+using TwitchDownloaderAPI.Store;
 
 namespace TwitchDownloaderAPI.Controllers
 {
-    [Route("api/videos/{videoId}/chatlogs")]
+    [Route("api/videos/{videoId:int}/chatlog")]
     [ApiController]
     public class ChatLogController : ControllerBase
     {
@@ -45,32 +45,24 @@ namespace TwitchDownloaderAPI.Controllers
         }
         
         [HttpGet("content")]
-        [Produces("application/octet-stream", "application/x-protobuf")]
+        [Produces("text/plain", "application/x-protobuf")]
         public async Task<IActionResult> GetChatLog([FromRoute] int videoId)
         {
+            byte[]? chatLogContent;
             try
             {
-                var metadata = await _metadataStore.GetMetadataAsync(videoId);
-                if(metadata == null)
-                {
-                    return NotFound(new { Message = $"Chat log metadata not found for videoId: {videoId}" });
-                }
-
-                var chatLogContent = await _chatLogStore.GetChatLogAsync(metadata.VideoId);
-                if(chatLogContent == null || chatLogContent.Length == 0)
-                {
-                    return NotFound(new { Message = $"Chat log content not found for videoId: {videoId}" });
-                }
-        
-                // Let the framework handle Content-Length header.
-                // Let the framework decide the content type based on content negotiation.
-                return File(chatLogContent, "application/octet-stream");
+                chatLogContent = await _chatLogStore.GetChatLogAsync(videoId);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                // Log the exception and return 500 Internal Server Error.
                 return StatusCode(500, new { Message = $"An error occurred: {ex.Message}" });
             }
+            
+            if (chatLogContent == null || chatLogContent.Length == 0)
+            {
+                return NotFound(new { Message = $"Chat log not found for videoId: {videoId}" });
+            }
+            return File(chatLogContent, "text/plain");
         }
     }
 }
