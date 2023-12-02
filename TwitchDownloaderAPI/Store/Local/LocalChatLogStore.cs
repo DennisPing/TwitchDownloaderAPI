@@ -13,6 +13,8 @@ public class LocalChatLogStore : IChatLogStore
         }
     }
     
+    public string ChatLogLocation => _folderpath;
+    
     public Task AddChatLogAsync(int videoId, byte[] chatLogData)
     {
         var filepath = Path.Combine(_folderpath, videoId.ToString());
