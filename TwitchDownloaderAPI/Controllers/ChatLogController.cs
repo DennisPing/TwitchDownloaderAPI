@@ -5,6 +5,7 @@ using TwitchDownloaderAPI.Store;
 using TwitchDownloaderCore;
 using TwitchDownloaderCore.Chat;
 using TwitchDownloaderCore.Options;
+using TwitchDownloaderCore.Tools;
 
 namespace TwitchDownloaderAPI.Controllers;
 
