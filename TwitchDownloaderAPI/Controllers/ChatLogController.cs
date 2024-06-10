@@ -2,8 +2,8 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using TwitchDownloaderAPI.Models;
 using TwitchDownloaderAPI.Store;
+using TwitchDownloaderAPI.Tools;
 using TwitchDownloaderCore;
-using TwitchDownloaderCore.Chat;
 using TwitchDownloaderCore.Options;
 using TwitchDownloaderCore.Tools;
 
@@ -23,24 +23,27 @@ public class ChatLogController : ControllerBase
         _chatLogStore = chatLogStore;
         _logger = logger;
     }
-    
+
     [HttpGet("metadata")]
     public async Task<ActionResult<ChatLogMetadata>> GetMetadata([FromRoute] int videoId)
     {
+        ChatLogMetadata? metadata;
         try
         {
-            var metadata = await _metadataStore.GetMetadataAsync(videoId);
-            if (metadata != null)
-            {
-                return Ok(metadata);
-            }
-
-            return NotFound();
+            metadata = await _metadataStore.GetMetadataAsync(videoId);
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, new { Message = $"Internal server error: {ex.Message}" });
+            return StatusCode((int)HttpStatusCode.InternalServerError,
+                new { Message = $"Internal server error: {ex.Message}" });
         }
+
+        if (metadata == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(metadata);
     }
     
     [HttpGet("content")]
@@ -53,13 +56,15 @@ public class ChatLogController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, new { Message = $"An error occurred: {ex.Message}" });
+            return StatusCode((int)HttpStatusCode.InternalServerError,
+                new { Message = $"An error occurred: {ex.Message}" });
         }
         
         if (chatLogContent == null || chatLogContent.Length == 0)
         {
             return NotFound(new { Message = $"Chat log not found for videoId: {videoId}" });
         }
+
         return File(chatLogContent, "text/plain");
     }
 
@@ -72,20 +77,20 @@ public class ChatLogController : ControllerBase
             Compression = ChatCompression.None,
             Id = videoId.ToString(),
             Filename = Path.Combine(_chatLogStore.ChatLogLocation, $"{videoId}_chat.txt"),
-            ConnectionCount = 4,
             Silent = true,
             TimeFormat = TimestampFormat.Relative,
         };
-        
-        var chatDownloader = new ChatDownloader(opts);
+
+        var progress = new ApiTaskProgress(_logger);
+        var chatDownloader = new ChatDownloader(opts, progress);
         try
         {
-            Progress<ProgressReport> progress = new();
-            await chatDownloader.DownloadAsync(progress, new CancellationToken());
+            await chatDownloader.DownloadAsync(new CancellationToken());
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, new { Message = $"Error downloading {videoId}: {ex.Message}" });
+            return StatusCode((int)HttpStatusCode.InternalServerError,
+                new { Message = $"Error downloading {videoId}: {ex.Message}" });
         }
 
         byte[]? chatLogContent;
@@ -95,13 +100,15 @@ public class ChatLogController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, new { Message = $"An error occurred: {ex.Message}" });
+            return StatusCode((int)HttpStatusCode.InternalServerError,
+                new { Message = $"An error occurred: {ex.Message}" });
         }
         
         if (chatLogContent == null || chatLogContent.Length == 0)
         {
             return NotFound(new { Message = $"Chat log not found for videoId: {videoId}" });
         }
+
         return File(chatLogContent, "text/plain");
     }
     

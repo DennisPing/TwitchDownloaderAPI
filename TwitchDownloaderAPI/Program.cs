@@ -17,9 +17,15 @@ using TwitchDownloaderAPI.Store.Local;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
+// === 1. Serilog configuration ===
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
-// Add services to the container.
+builder.Host.UseSerilog();
+
+// === 2. Dependency injection ===
 builder.Services.AddControllers(options =>
 {
     options.RespectBrowserAcceptHeader = true;
@@ -27,28 +33,34 @@ builder.Services.AddControllers(options =>
 builder.Services.AddScoped<IMetadataStore, LocalMetadataStore>();
 builder.Services.AddScoped<IChatLogStore, LocalChatLogStore>();
 
+// === 3. Swagger services ===
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Build the app
+// === 4. Build web app ===
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// === 5. Conditional middleware configuration ===
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseExceptionHandler("/error");
+}
 
-Console.WriteLine("Environment: " + app.Environment.EnvironmentName); // Check the environment
-Console.WriteLine("IsDevelopment: " + app.Environment.IsDevelopment()); // Check if it's development
-Console.WriteLine("Base Directory: " + AppDomain.CurrentDomain.BaseDirectory); // Check the base directory
-
+// === 6. General middleware configuration ===
 app.UseSerilogRequestLogging();
+app.UseRouting();
+app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapControllers();
 
+// === 7. Graceful shutdown ===
 app.Lifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
 app.Run();

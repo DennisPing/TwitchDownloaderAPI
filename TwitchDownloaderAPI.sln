@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchDownloaderAPI", "TwitchDownloaderAPI\TwitchDownloaderAPI.csproj", "{CDDFA27D-3672-40BA-9780-8CCA96CD3FB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchDownloaderCore", "TwitchDownloader\TwitchDownloaderCore\TwitchDownloaderCore.csproj", "{C7AB191C-01ED-4A08-97A8-78185D34E264}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,9 +18,5 @@ Global
 		{CDDFA27D-3672-40BA-9780-8CCA96CD3FB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDDFA27D-3672-40BA-9780-8CCA96CD3FB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDDFA27D-3672-40BA-9780-8CCA96CD3FB7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7AB191C-01ED-4A08-97A8-78185D34E264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7AB191C-01ED-4A08-97A8-78185D34E264}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7AB191C-01ED-4A08-97A8-78185D34E264}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7AB191C-01ED-4A08-97A8-78185D34E264}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
