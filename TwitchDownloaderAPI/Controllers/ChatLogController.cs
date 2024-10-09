@@ -9,7 +9,7 @@ using TwitchDownloaderCore.Tools;
 
 namespace TwitchDownloaderAPI.Controllers;
 
-[Route("api/videos/{videoId:int}/chatlog")]
+[Route("api/chatlogs/{videoId:int}")]
 [ApiController]
 public class ChatLogController : ControllerBase
 {
@@ -24,6 +24,11 @@ public class ChatLogController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Get chatlog metadata from local store
+    /// </summary>
+    /// <param name="videoId">The video ID</param>
+    /// <returns></returns>
     [HttpGet("metadata")]
     public async Task<ActionResult<ChatLogMetadata>> GetMetadata([FromRoute] int videoId)
     {
@@ -38,7 +43,7 @@ public class ChatLogController : ControllerBase
                 new { Message = $"Internal server error: {ex.Message}" });
         }
 
-        if (metadata == null)
+        if (metadata == null || metadata.ChatLogId == 0)
         {
             return NotFound();
         }
@@ -46,6 +51,11 @@ public class ChatLogController : ControllerBase
         return Ok(metadata);
     }
     
+    /// <summary>
+    /// Get chatlog content if in local store, else call the chatlog downloader
+    /// </summary>
+    /// <param name="videoId">The video ID</param>
+    /// <returns></returns>
     [HttpGet("content")]
     public async Task<IActionResult> GetChatLog([FromRoute] int videoId)
     {
@@ -68,6 +78,11 @@ public class ChatLogController : ControllerBase
         return File(chatLogContent, "text/plain");
     }
 
+    /// <summary>
+    /// Download the chatlog for a Twitch VOD
+    /// </summary>
+    /// <param name="videoId">The video ID</param>
+    /// <returns></returns>
     [HttpGet("download")]
     public async Task<IActionResult> DownloadChatLog([FromRoute] int videoId)
     {
@@ -77,7 +92,6 @@ public class ChatLogController : ControllerBase
             Compression = ChatCompression.None,
             Id = videoId.ToString(),
             Filename = Path.Combine(_chatLogStore.ChatLogLocation, $"{videoId}_chat.txt"),
-            Silent = true,
             TimeFormat = TimestampFormat.Relative,
         };
 

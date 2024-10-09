@@ -5,14 +5,14 @@ using TwitchDownloaderAPI.Store.Local;
 /*
  * Rough draft routes
  *
- * api/videos/{videoId}/metadata - Video metadata
- * api/videos/{videoId}/content - Video content
+ * api/chatlogs/{videoId}/metadata - chatlog metadata
+ * api/chatlogs/{videoId}/content - chatlog content
  *
- * api/videos/{videoId}/chatlog/metadata - Chatlog metadata related to video
- * api/videos/{videoId}/chatlog/content - Chatlog content related to video
+ * api/videos/{videoId}/metadata - video metadata
+ * api/videos/{videoId}/content - video content
  *
- * api/videos/{videoId}/chatlog/analytics - Analytical data related to chatlog
- * api/videos/[videoId}/chatlog/graphs - Graphical data related to chatlog
+ * api/analytics/{videoId}/analytics - analytical data related to chatlog
+ * api/graphs/[videoId}/graphs - graphical data related to chatlog
  */
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +25,8 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+Log.Logger.Information("Test log entry from Program.cs");
+
 // === 2. Dependency injection ===
 builder.Services.AddControllers(options =>
 {
@@ -32,6 +34,7 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddScoped<IMetadataStore, LocalMetadataStore>();
 builder.Services.AddScoped<IChatLogStore, LocalChatLogStore>();
+builder.Services.AddProblemDetails();
 
 // === 3. Swagger services ===
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
